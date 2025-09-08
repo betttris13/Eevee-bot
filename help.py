@@ -4,8 +4,8 @@ async def help(message):
     help_str = ""
     if util.is_registered(message):
         help_str = "**Available commands:**\n"
-        help_str += "/role add role1, role2, ...\nAdds the roles listed after command. Note roles must be comma seperated.\n\n"
-        help_str += "/role remove role1, role2, ...\nRemoves the roles listed after command. Note roles must be comma seperated.\n\n"
+        help_str += "/role add role1, role2, ...\nAdds the roles listed after command. Note roles must be comma separated.\n\n"
+        help_str += "/role remove role1, role2, ...\nRemoves the roles listed after command. Note roles must be comma separated.\n\n"
         help_str += "/role small\nGives the set small role if it is set.\n\n"
         help_str += "/role small remove\nRemoves the set small role after a set time.\n\n"
         help_str += "/role list\nShows a list of available roles.\n\n"
@@ -13,8 +13,8 @@ async def help(message):
     
     else:
         help_str = "**Available commands:**\n"
-        help_str += "/role add role1, role2, ...\nAdds the roles listed after command. Note roles must be comma seperated.\n\n"
-        help_str += "/role remove role1, role2, ...\nRemoves the roles listed after command. Note roles must be comma seperated.\n\n"
+        help_str += "/role add role1, role2, ...\nAdds the roles listed after command. Note roles must be comma separated.\n\n"
+        help_str += "/role remove role1, role2, ...\nRemoves the roles listed after command. Note roles must be comma separated.\n\n"
         help_str += "/role small\nGives the set small role if it is set.\n\n"
         help_str += "/role small remove\nRemoves the set small role after a set time.\n\n"
         help_str += "/role list\nShows a list of available roles.\n\n"

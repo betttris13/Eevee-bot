@@ -74,8 +74,23 @@ def is_registered_role(message):
     
     return False
 
-def is_registered(message):
-    return is_registered_role(message) or is_registered_user(message)
+async def is_registered(message, do_log = True):
+    guild_config_file = f"{DIR}/guild_configs/{message.guild.id}.json"
+    if os.path.isfile(guild_config_file):
+        if is_registered_role(message) or is_registered_user(message):
+            return True
+        
+        else:
+            if do_log:
+                await log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
+                await pkdelay(message)
+                await message.channel.send(f"Permission denied")
+            return False
+    
+    else:
+        if do_log:
+            await message.channel.send(f"Server not initialised")
+        return False
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -155,3 +170,34 @@ async def pkdelay(message):
     if guild_config != None:
         if guild_config["PK_mode"]:
             await asyncio.sleep(1)
+
+async def pk_on(message):
+    guild_config = load_config(message.guild.id)
+    guild_config["PK_mode"] = True
+    save_config(guild_config, message.guild.id)
+    await log(f"User {message.author.name} (id={message.author.id}) enabled pk mode in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
+    await pkdelay(message)
+    await message.channel.send(f"Server being set to use pk delay. The bot will wait 1 second before responding to allow pk proxy to send.")
+
+async def pk_off(message):
+    guild_config = load_config(message.guild.id)
+    guild_config["PK_mode"] = False
+    save_config(guild_config, message.guild.id)
+    await log(f"User {message.author.name} (id={message.author.id}) disabled pk mode in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
+    await message.channel.send(f"Server being set to not use pk delay. The bot will respond immediately. Pk proxied messages may send after the bot responds.")
+
+async def log_set(message):
+    guild_config = load_config(message.guild.id)
+    guild_config["log_channel"] = message.channel.id
+    save_config(guild_config, message.guild.id)
+    await log(f"User {message.author.name} (id={message.author.id}) set log channel in channel #{message.channel.name}", guild = message.guild.id, log_type = "LOG")
+    await pkdelay(message)
+    await message.channel.send(f"Eevee bot set to use this channel as the log channel for this server.")
+
+async def log_off(message):
+    guild_config = load_config(message.guild.id)
+    guild_config["log_channel"] = None
+    save_config(guild_config, message.guild.id)
+    await log(f"User {message.author.name} (id={message.author.id}) disabled logging in channel #{message.channel.name}", guild = message.guild.id, log_type = "LOG")
+    await pkdelay(message)
+    await message.channel.send(f"Eevee bot will no longer log to this server (bot log file will not effected).")
