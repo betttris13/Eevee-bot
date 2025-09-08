@@ -7,7 +7,7 @@ import asyncio
 import discord
 import re
 
-DIR = "D:/Eevee bot"
+DIR = "D:/Eevee-bot"
 LOG_FILE = f"{DIR}/log.txt"
 
 lists_add = {"registered_roles": {"str": "registered", "log_type": "REGISTRATION"},
