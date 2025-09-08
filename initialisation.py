@@ -56,4 +56,4 @@ async def reinitialise(message):
     else:
         await util.log(f"User {message.author.name} (id={message.author.id}) attempted reinitialision of guild {message.guild.name} with id={message.guild.id} but didn't provide token ({guild_config["reset_token"]}) in channel #{message.channel.name}", guild = message.guild.id, log_type = "INITIALISATION")
         await util.pkdelay(message)
-        await message.channel.send(f"Warning you are resetting server initialisation. This will delete blacklist and all registerted users/roles. To confirm use: /role reinitialise {guild_config["reset_token"]}")
+        await message.channel.send(f"Warning you are resetting server initialisation. This will delete blacklist and all registered users/roles. To confirm use: /role reinitialise {guild_config["reset_token"]}")

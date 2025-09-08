@@ -8,6 +8,7 @@ import initialisation
 import blacklist
 import roles
 import help
+import small
 
 dotenv.load_dotenv()
 TOKEN = str(os.getenv("TOKEN"))
@@ -24,277 +25,163 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+
+    # Ignore messages from self
     if message.author == client.user:
         return
     
-    if (message.webhook_id): 
+    # Ignore webhooks
+    if message.webhook_id: 
         return
     
+    # Cute message to check bot is alive
     if message.content.startswith('Hi Eevee'):
         await util.pkdelay(message)
         await message.channel.send("Eevee!")
 
+    # /role add [role1, role2, ...]
+    # Adds the roles listed after command. Note roles must be comma separated.
     elif message.content.startswith('/role add'):
         await roles.add_roles(message)
 
+    # /role remove [role1, role2, ...]
+    # Removes the roles listed after command. Note roles must be comma separated.
     elif message.content.startswith('/role remove'):
         await roles.remove_roles(message)
 
+    # /role help
+    # Shows help message.
     elif message.content.startswith('/role help'):
         await help.help(message)
 
+    # /role list
+    # Shows a list of available roles
     elif message.content == '/role list':
         await help.list_roles(message)
 
+    # /role blacklist mode [blacklist/whitelist]
+    # Sets blacklist mode to the specified mode.
     elif message.content== "/role blacklist mode blacklist" or message.content == "/role blacklist -b":
-        if util.is_registered(message):
+        if await util.is_registered(message):
             await blacklist.blacklist_mode(message, True)
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-    
+
+    # Sets blacklist mode to the specified mode.
     elif message.content == "/role blacklist mode whitelist" or message.content == "/role blacklist -w":
-        if util.is_registered(message):
+        if await util.is_registered(message):
             await blacklist.blacklist_mode(message, False)
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
-    elif message.content.startswith('/role blacklist add'):
-        if util.is_registered(message):
-            await blacklist.blacklist_add(message)
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
     
+    # /role blacklist add [role1, role2, ...]
+    # Adds the roles listed after command to the blacklist. Note roles must be comma separated.
+    elif message.content.startswith('/role blacklist add'):
+        if await util.is_registered(message):
+            await blacklist.blacklist_add(message)
+
+    # /role blacklist remove [role1, role2, ...]
+    # Removes the roles listed after command to the blacklist. Note roles must be comma separated.        
     elif message.content.startswith('/role blacklist remove'):
-        if util.is_registered(message):
+        if await util.is_registered(message):
             await blacklist.blacklist_remove(message)
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
+    
+    # /role whitelist add [role1, role2, ...]
+    # Adds the roles listed after command to the whitelist. Note roles must be comma separated.
     elif message.content.startswith('/role whitelist add'):
-        if util.is_registered(message):
+        if await util.is_registered(message):
             await blacklist.whitelist_add(message)
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
 
+    # /role whitelist remove [role1, role2, ...]
+    # Removes the roles listed after command to the whitelist. Note roles must be comma separated.          
     elif message.content.startswith('/role whitelist remove'):
-        if util.is_registered(message):
+        if await util.is_registered(message):
             await blacklist.whitelist_remove(message)
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
+    
+    # /role register [@user1 @user2 .../role1, role2, .../-force]
+    # Adds the users mentioned or roles listed after command to the list of registered users. Note roles must be comma separated. -force allows admin to force add themselves to registered user list.
     elif message.content.startswith('/role register'):
         if message.content == "/role register -force" and message.author.guild_permissions.administrator:
             await registration.force(message)
         
-        elif util.is_registered(message):
-                await registration.register(message)
+        elif await util.is_registered(message):
+            await registration.register(message)
 
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
+    # /role deregister [@user1 @user2 .../role1, role2, ...]
+    # Removes the users mentioned or roles listed after command from the list of registered users. Note roles must be comma separated.
     elif message.content.startswith('/role deregister'):
-        if util.is_registered(message):
+        if await util.is_registered(message):
             await registration.deregister(message)
 
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
+    # /role initialise
+    # Initialises the server with default configuration and registers the initialising user.
     elif message.content.startswith('/role initialise'):
         await initialisation.initialise(message)
 
+    # /role reinitialise
+    # Reinitialises the server with default configuration and registers the initialising user. Initialises the server if not initialised.
     elif message.content.startswith('/role reinitialise'):
         guild_config_file = f"{util.DIR}/guild_configs/{message.guild.id}.json"
         if os.path.isfile(guild_config_file):
-            if util.is_registered(message):
+            if await util.is_registered(message, False):
                 await initialisation.reinitialise(message)
 
             else:
                 await util.log(f"User {message.author.name} (id={message.author.id}) attempted reinitialision of guild {message.guild.name} with id={message.guild.id} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
                 await util.pkdelay(message)
                 await message.channel.send(f"Permission denied")
+        
         else:
             await initialisation.initialise(message)
 
+    # /role pkmode [on/off]
+    # Enables/disables delay before responding to allow pk to proxy msg.
     elif message.content == '/role pkmode on':
-        if util.is_registered(message):
-            guild_config = util.load_config(message.guild.id)
-            guild_config["PK_mode"] = True
-            util.save_config(guild_config, message.guild.id)
-            await util.log(f"User {message.author.name} (id={message.author.id}) enabled pk mode in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-            await util.pkdelay(message)
-            await message.channel.send(f"Server being set to use pk delay. The bot will wait 1 second before responding to allow pk proxy to send.")
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
+        if await util.is_registered(message):
+            await util.pk_on(message)
 
+    # Enables/disables delay before responding to allow pk to proxy msg.
     elif message.content == '/role pkmode off':
-        if util.is_registered(message):
-            guild_config = util.load_config(message.guild.id)
-            guild_config["PK_mode"] = False
-            util.save_config(guild_config, message.guild.id)
-            await util.log(f"User {message.author.name} (id={message.author.id}) disabled pk mode in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-            await message.channel.send(f"Server being set to not use pk delay. The bot will respond immediately. Pk proxied messages may send after the bot responds.")
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
+        if await util.is_registered(message):
+            await util.pk_off(message)
+    
+    # /role log set
+    # Sets the channel command is sent is as the servers logging channel.
     elif message.content == '/role log set':
-        if util.is_registered(message):
-            guild_config = util.load_config(message.guild.id)
-            guild_config["log_channel"] = message.channel.id
-            util.save_config(guild_config, message.guild.id)
-            await util.log(f"User {message.author.name} (id={message.author.id}) set log channel in channel #{message.channel.name}", guild = message.guild.id, log_type = "LOG")
-            await util.pkdelay(message)
-            await message.channel.send(f"Eevee bot set to use this channel as the log channel for this server.")
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
-
+        if await util.is_registered(message):
+            await util.log_set(message)
+    
+    # /role log off
+    # Disables bot logging to server.
     elif message.content == '/role log off':
-        if util.is_registered(message):
-            guild_config = util.load_config(message.guild.id)
-            guild_config["log_channel"] = None
-            util.save_config(guild_config, message.guild.id)
-            await util.log(f"User {message.author.name} (id={message.author.id}) disabled logging in channel #{message.channel.name}", guild = message.guild.id, log_type = "LOG")
-            await util.pkdelay(message)
-            await message.channel.send(f"Eevee bot will no longer log to this server (bot log file will not effected).")
-        
-        else:
-            await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-            await util.pkdelay(message)
-            await message.channel.send(f"Permission denied")
+        if await util.is_registered(message):
+            await util.log_off(message)
     
     elif message.content.startswith("/role small"):
+
+        # /role small set [role]
+        # Sets the small role on the server.
         if message.content.startswith('/role small set'):
-            if util.is_registered(message):
-                    guild_config = util.load_config(message.guild.id)
-                    role = message.content.removeprefix('/role small set ')
-                    role_obj = next((r for r in message.guild.roles if r.name.lower() == role.lower()), None)
-                    if role_obj != None:
-                        guild_config["small_role"] = role_obj.id
-                        util.save_config(guild_config, message.guild.id)
-                        await util.log(f"User {message.author.name} (id={message.author.id}) set small roll to {role_obj.name} (id={role_obj.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-                        await util.pkdelay(message)
-                        await message.channel.send(f"Small role set to {role_obj.name} in this server. Small role will now be available to members.")
-                    else:
-                        await util.pkdelay(message)
-                        await message.channel.send(f"Role {role} not found.")
-                
-            else:
-                await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-                await util.pkdelay(message)
-                await message.channel.send(f"Permission denied")
-
-        elif message.content.startswith('/role small time'):
-            if util.is_registered(message):
-                    guild_config = util.load_config(message.guild.id)
-                    time = message.content.removeprefix('/role small time ')
-                    if time.isnumeric():
-                        guild_config["small_time"] = int(time)
-                        util.save_config(guild_config, message.guild.id)
-                        await util.pkdelay(message)
-                        await message.channel.send(f"Small remove timer set to {guild_config["small_time"]} seconds ({guild_config["small_time"]/60} minutes)")
-                    else:
-                        await util.pkdelay(message)
-                        await message.channel.send(f"Please set time in integer seconds")
-                
-            else:
-                await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-                await util.pkdelay(message)
-                await message.channel.send(f"Permission denied")
-
-        elif message.content == '/role small off':
-            if util.is_registered(message):
-                guild_config = util.load_config(message.guild.id)
-                guild_config["small_role"] = None
-                util.save_config(guild_config, message.guild.id)
-                await util.log(f"User {message.author.name} (id={message.author.id}) disabled smalls in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-                await util.pkdelay(message)
-                await message.channel.send(f"Small role will no longer be available in this server.")
-            
-            else:
-                await util.log(f"User {message.author.name} (id={message.author.id}) attempted to use command {message.content} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
-                await util.pkdelay(message)
-                await message.channel.send(f"Permission denied")
-
-        elif message.content == '/role small remove':
-            guild_config = util.load_config(message.guild.id)
-            if guild_config["small_role"] != None:
-                role_obj = next((r for r in message.guild.roles if r.id == guild_config["small_role"]), None)
-                if role_obj != None:
-                    if any(role.id == guild_config["small_role"] for role in message.author.roles):
-                        await util.pkdelay(message)
-                        
-                        ping_str = ""
-                        for role in guild_config["registered_roles"]:
-                            reg_role_obj = message.guild.get_role(role)
-                            ping_str += f" {reg_role_obj.mention}"
-
-                        await message.channel.send(f"You have requested the {role_obj.name} role be removed, it will be removed in {guild_config["small_time"]} seconds ({guild_config["small_time"]/60} minutes) unless it is removed first first. {ping_str}")
-                        await util.log(f"Triggered countdown to remove role {role_obj.name} (id={role_obj.id}) from user {message.author.name} (id={message.author.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-                        await asyncio.sleep(guild_config["small_time"])
-                        await message.author.remove_roles(role_obj)
-                        await util.log(f"Removing role {role_obj.name} (id={role_obj.id}) from user {message.author.name} (id={message.author.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-                        await message.channel.send(f"{message.author.mention} the small role {role_obj.name} has been removed if it hadn't already.")
-                    else:
-                        await util.pkdelay(message)
-                        await message.channel.send(f"You are not currently small.")
-                
-                else:
-                    await util.pkdelay(message)
-                    await message.channel.send(f"The set small role was not available.")
-            
-            else:
-                await util.pkdelay(message)
-                await message.channel.send(f"Small role not set.")
+            if await util.is_registered(message):
+                await small.set_small(message)
         
+        # /role small time [time]
+        # Sets the small timer value to the provided value in seconds.
+        elif message.content.startswith('/role small time'):
+            if await util.is_registered(message):
+                await small.small_time(message)
+
+        # /role small off
+        # Disables the small role in the server.
+        elif message.content == '/role small off':
+            if await util.is_registered(message):
+                await small.small_off(message)
+
+        # /role small remove
+        # Triggers a timer to remove the set small role if it is set and pings the registered roles to remove in the meantime.
+        elif message.content == '/role small remove':
+            await small.small_remove(message)
+        
+        # /role small
+        # Gives the set small role if it is set.
         else:
-            guild_config = util.load_config(message.guild.id)
-
-            if guild_config["small_role"] != None:
-                role_obj = next((r for r in message.guild.roles if r.id == guild_config["small_role"]), None)
-                if role_obj != None:
-                    await message.author.add_roles(role_obj)
-                    await util.log(f"Giving role {role_obj.name} (id={role_obj.id}) to user {message.author.name} (id={message.author.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
-                    await util.pkdelay(message)
-                    await message.channel.send(f"You have been given the {role_obj.name} role.")
-
-                else:
-                    await util.pkdelay(message)
-                    await message.channel.send(f"The set small role was not available.")
-            
-            else:
-                await util.pkdelay(message)
-                await message.channel.send(f"Small role not set.")
-
+            await small.small(message)
 
 
 client.run(TOKEN)
