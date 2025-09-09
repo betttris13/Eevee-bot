@@ -1,6 +1,24 @@
 
 # Change Log
 
+## [pr0.1.2] - 2025-09-09
+ 
+### Added
+ - Adds basic error logging.
+
+### Changed
+ - Moved bot directory and logging file to .env file.
+
+### Fixed
+- Removed unused imports.
+- Code commenting in initialisation.py.
+- Code commenting in help.py.
+- Code commenting in initialisation.py.
+- Code commenting in registration.py.
+- Code commenting in roles.py.
+- Code commenting in small.py.
+- Code commenting in util.py.
+
 ## [pr0.1.1] - 2025-09-08
  
 ### Added

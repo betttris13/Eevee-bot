@@ -1,7 +1,6 @@
 import discord
 import os
 import dotenv
-import asyncio
 import util
 import registration
 import initialisation
@@ -117,6 +116,8 @@ async def on_message(message):
     # /role reinitialise
     # Reinitialises the server with default configuration and registers the initialising user. Initialises the server if not initialised.
     elif message.content.startswith('/role reinitialise'):
+        
+        # Check if guild initialised
         guild_config_file = f"{util.DIR}/guild_configs/{message.guild.id}.json"
         if os.path.isfile(guild_config_file):
             if await util.is_registered(message, False):
@@ -183,5 +184,11 @@ async def on_message(message):
         else:
             await small.small(message)
 
+@client.event
+async def on_error(event, *args, **kwargs):
+    if event == 'on_message':
+        util.log(f'Unhandled message: {args[0]}', log_type="ERROR")
+    else:
+        raise
 
 client.run(TOKEN)

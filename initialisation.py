@@ -1,8 +1,8 @@
 import os
 import json
-import asyncio
 import util
 
+# Initialise server with default settings sand add initialising user to registered users.
 async def initialise(message):
     guild_config_file = f"{util.DIR}/guild_configs/{message.guild.id}.json"
 
@@ -31,6 +31,7 @@ async def initialise(message):
         await util.pkdelay(message)
         await message.channel.send(f"Server initialised with {message.author.mention} as a registered user")
 
+# Reinitialise server with default settings sand add initialising user to registered users.
 async def reinitialise(message):
     guild_config = util.load_config(message.guild.id)
 

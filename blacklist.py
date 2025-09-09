@@ -1,32 +1,34 @@
-import asyncio
-import json
-import os
 import util
 
+# Parses roles and adds them to blacklist in guild config.
 async def blacklist_add(message):
     role_str = message.content.removeprefix("/role blacklist add")
     str = await util.add_roles(message, role_str, "blacklist_roles")
     await util.pkdelay(message)
     await message.channel.send(str)
 
+# Parses roles and removes them from blacklist in guild config.
 async def blacklist_remove(message):
     role_str = message.content.removeprefix("/role blacklist remove")
     str = await util.remove_roles(message, role_str, "blacklist_roles")
     await util.pkdelay(message)
     await message.channel.send(str)
 
+# Parses roles and adds them to whitelist in guild config.
 async def whitelist_add(message):
     role_str = message.content.removeprefix("/role whitelist add")
     str = await util.add_roles(message, role_str, "whitelist_roles")
     await util.pkdelay(message)
     await message.channel.send(str)
 
+# Parses roles and removes them from whitelist in guild config.
 async def whitelist_remove(message):
     role_str = message.content.removeprefix("/role whitelist remove")
     str = await util.remove_roles(message, role_str, "whitelist_roles")
     await util.pkdelay(message)
     await message.channel.send(str)
 
+# Sets blacklist mode in guild config.
 async def blacklist_mode(message, blacklist):
     guild_config = util.load_config(message.guild.id)
 

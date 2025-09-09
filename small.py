@@ -1,6 +1,7 @@
 import asyncio
 import util
 
+# Sets the small role in the guild config.
 async def set_small(message):
     guild_config = util.load_config(message.guild.id)
     role = message.content.removeprefix('/role small set ')
@@ -15,6 +16,7 @@ async def set_small(message):
         await util.pkdelay(message)
         await message.channel.send(f"Role {role} not found.")
 
+# Sets the small timer in the guild config.
 async def small_time(message):
     guild_config = util.load_config(message.guild.id)
     time = message.content.removeprefix('/role small time ')
@@ -27,6 +29,7 @@ async def small_time(message):
         await util.pkdelay(message)
         await message.channel.send(f"Please set time in integer seconds")
 
+# Turns off the small role in the guild config.
 async def small_off(message):
     guild_config = util.load_config(message.guild.id)
     guild_config["small_role"] = None
@@ -35,6 +38,7 @@ async def small_off(message):
     await util.pkdelay(message)
     await message.channel.send(f"Small role will no longer be available in this server.")
 
+# Triggers timer to remove the small role from the user and ping registered roles.
 async def small_remove(message):
     guild_config = util.load_config(message.guild.id)
     if guild_config["small_role"] != None:
@@ -66,6 +70,7 @@ async def small_remove(message):
         await util.pkdelay(message)
         await message.channel.send(f"Small role not set.")
 
+# Adds the small role to the user.
 async def small(message):
     guild_config = util.load_config(message.guild.id)
     if guild_config["small_role"] != None:

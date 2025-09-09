@@ -3,6 +3,7 @@ import json
 import os
 import util
 
+# Register users or roles giving them elevated permissions in the server.
 async def register(message):
     if message.mentions:
         str = f""
@@ -23,6 +24,7 @@ async def register(message):
         await util.pkdelay(message)
         await message.channel.send(str)
 
+# Deregisters users or roles, removing them from having elevated permissions.
 async def deregister(message):
     if message.mentions:
             str = f""
@@ -43,6 +45,7 @@ async def deregister(message):
         await util.pkdelay(message)
         await message.channel.send(str)
 
+# Force adds a server admin to the registered user list.
 async def force(message):
     guild_config_file = f"{util.DIR}/guild_configs/{message.guild.id}.json"
     if os.path.isfile(guild_config_file):

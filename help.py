@@ -1,5 +1,6 @@
 import util
 
+# Generates help string and sends it to discord.
 async def help(message):
     help_str = ""
     if util.is_registered(message):
@@ -23,6 +24,7 @@ async def help(message):
     await util.pkdelay(message)
     await message.channel.send(help_str)
 
+# Generates list of available roles on the guild and sends it to discord.
 async def list_roles(message):
     guild_config = util.load_config(message.guild.id)
     available_roles = ""

@@ -1,8 +1,6 @@
-import asyncio
-import json
-import os
 import util
 
+# Passes roles and adds them to the user if they exist and are available.
 async def add_roles(message):
     role_str = message.content.removeprefix("/role add")
     roles = util.parse_roles(role_str)
@@ -13,6 +11,8 @@ async def add_roles(message):
     for role in roles:
         role_obj = next((r for r in message.guild.roles if r.name.lower() == role.lower()), None)
         if role_obj != None:
+
+            # Check blacklist mode
             if guild_config["blacklist_mode"]:
                 if role_obj.id not in guild_config["blacklist_roles"]:
                     await message.author.add_roles(role_obj)
@@ -33,6 +33,7 @@ async def add_roles(message):
         else:
             failed_str += f", {role}"
 
+    # Generate msg string
     str = ""
     if guild_config["blacklist_mode"]:
         if added_str != "":
@@ -52,6 +53,7 @@ async def add_roles(message):
     await util.pkdelay(message)
     await message.channel.send(str)
     
+# Passes roles and removes them from the user if they exist and are available.
 async def remove_roles(message):
     role_str = message.content.removeprefix("/role remove")
     roles = util.parse_roles(role_str)
@@ -62,6 +64,8 @@ async def remove_roles(message):
     for role in roles:
         role_obj = next((r for r in message.guild.roles if r.name.lower() == role.lower()), None)
         if role_obj != None:
+
+            # Check blacklist mode
             if guild_config["blacklist_mode"]:
                 if role_obj.id not in guild_config["blacklist_roles"]:
                     await message.author.remove_roles(role_obj)
@@ -83,7 +87,8 @@ async def remove_roles(message):
         else:
            failed_str += f", {role}"
 
-        str = ""
+    # Generate msg string
+    str = ""
     if guild_config["blacklist_mode"]:
         if removed_str != "":
             str += f"The following roles were removed:{removed_str.removeprefix(",")}.\n"
