@@ -1,10 +1,24 @@
 
 # Change Log
 
+## [pr0.1.3] - 2025-xx-xx
+ 
+### Added
+ - Added error logging.
+ - Added version variable in util.py.
+
+### Changed
+ - Improved error handling logic.
+ - Changed message formatting to use embeds when appropriate.
+
+### Fixed
+ - Fixed parsing of roles containing commas. "" can now be used around role to ignore commas.
+ - Removed unused imports.
+
 ## [pr0.1.2] - 2025-09-09
  
 ### Added
- - Adds basic error logging.
+ - Added basic error logging.
 
 ### Changed
  - Moved bot directory and logging file to .env file.

@@ -1,3 +1,4 @@
+from datetime import datetime
 import discord
 import os
 import dotenv
@@ -38,13 +39,13 @@ async def on_message(message):
         await util.pkdelay(message)
         await message.channel.send("Eevee!")
 
-    # /role add [role1, role2, ...]
-    # Adds the roles listed after command. Note roles must be comma separated.
+    # /role add [role1, "role2", ...]
+    # Adds the roles listed after command. Note roles must be comma separated, commas between " will be ignored.
     elif message.content.startswith('/role add'):
         await roles.add_roles(message)
 
-    # /role remove [role1, role2, ...]
-    # Removes the roles listed after command. Note roles must be comma separated.
+    # /role remove [role1, "role2", ...]
+    # Removes the roles listed after command. Note roles must be comma separated, commas between " will be ignored.
     elif message.content.startswith('/role remove'):
         await roles.remove_roles(message)
 
@@ -69,32 +70,32 @@ async def on_message(message):
         if await util.is_registered(message):
             await blacklist.blacklist_mode(message, False)
     
-    # /role blacklist add [role1, role2, ...]
-    # Adds the roles listed after command to the blacklist. Note roles must be comma separated.
+    # /role blacklist add [role1, "role2", ...]
+    # Adds the roles listed after command to the blacklist. Note roles must be comma separated, commas between " will be ignored.
     elif message.content.startswith('/role blacklist add'):
         if await util.is_registered(message):
             await blacklist.blacklist_add(message)
 
-    # /role blacklist remove [role1, role2, ...]
-    # Removes the roles listed after command to the blacklist. Note roles must be comma separated.        
+    # /role blacklist remove [role1, "role2", ...]
+    # Removes the roles listed after command to the blacklist. Note roles must be comma separated, commas between " will be ignored.        
     elif message.content.startswith('/role blacklist remove'):
         if await util.is_registered(message):
             await blacklist.blacklist_remove(message)
     
-    # /role whitelist add [role1, role2, ...]
-    # Adds the roles listed after command to the whitelist. Note roles must be comma separated.
+    # /role whitelist add [role1, "role2", ...]
+    # Adds the roles listed after command to the whitelist. Note roles must be comma separated, commas between " will be ignored.
     elif message.content.startswith('/role whitelist add'):
         if await util.is_registered(message):
             await blacklist.whitelist_add(message)
 
-    # /role whitelist remove [role1, role2, ...]
-    # Removes the roles listed after command to the whitelist. Note roles must be comma separated.          
+    # /role whitelist remove [role1, "role2", ...]
+    # Removes the roles listed after command to the whitelist. Note roles must be comma separated, commas between " will be ignored.          
     elif message.content.startswith('/role whitelist remove'):
         if await util.is_registered(message):
             await blacklist.whitelist_remove(message)
     
-    # /role register [@user1 @user2 .../role1, role2, .../-force]
-    # Adds the users mentioned or roles listed after command to the list of registered users. Note roles must be comma separated. -force allows admin to force add themselves to registered user list.
+    # /role register [@user1 @user2 .../role1, "role2", .../-force]
+    # Adds the users mentioned or roles listed after command to the list of registered users. Note roles must be comma separated, commas between " will be ignored. -force allows admin to force add themselves to registered user list.
     elif message.content.startswith('/role register'):
         if message.content == "/role register -force" and message.author.guild_permissions.administrator:
             await registration.force(message)
@@ -102,8 +103,8 @@ async def on_message(message):
         elif await util.is_registered(message):
             await registration.register(message)
 
-    # /role deregister [@user1 @user2 .../role1, role2, ...]
-    # Removes the users mentioned or roles listed after command from the list of registered users. Note roles must be comma separated.
+    # /role deregister [@user1 @user2 .../role1, "role2", ...]
+    # Removes the users mentioned or roles listed after command from the list of registered users. Note roles must be comma separated, commas between " will be ignored.
     elif message.content.startswith('/role deregister'):
         if await util.is_registered(message):
             await registration.deregister(message)
@@ -126,7 +127,11 @@ async def on_message(message):
             else:
                 await util.log(f"User {message.author.name} (id={message.author.id}) attempted reinitialision of guild {message.guild.name} with id={message.guild.id} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
                 await util.pkdelay(message)
-                await message.channel.send(f"Permission denied")
+                embed = discord.Embed(colour = discord.Colour.red())
+                embed.add_field(name=f"Permission denied", value="You must be registered to use that command.")
+                embed.timestamp = datetime.now()
+                embed.set_footer(text=f"Eevee bot {util.VERSION}")
+                await message.channel.send(embed=embed)
         
         else:
             await initialisation.initialise(message)
@@ -186,9 +191,6 @@ async def on_message(message):
 
 @client.event
 async def on_error(event, *args, **kwargs):
-    if event == 'on_message':
-        util.log(f'Unhandled message: {args[0]}', log_type="ERROR")
-    else:
-        raise
+    await util.error_handle(event, *args, **kwargs)
 
 client.run(TOKEN)

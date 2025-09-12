@@ -1,3 +1,5 @@
+from datetime import datetime
+import discord
 import util
 
 # Passes roles and adds them to the user if they exist and are available.
@@ -34,24 +36,27 @@ async def add_roles(message):
             failed_str += f", {role}"
 
     # Generate msg string
-    str = ""
+    embed = discord.Embed(colour = discord.Colour.dark_grey())
     if guild_config["blacklist_mode"]:
         if added_str != "":
-            str += f"The following roles were added:{added_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were added:", value=added_str.removeprefix(","))
         if failed_str != "":
-            str += f"The following roles were not found:{failed_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were not found:", value=failed_str.removeprefix(","))
         if block_str != "":
-            str += f"The following roles are blacklisted:{block_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles are blacklisted:", value=block_str.removeprefix(","))
     else:
         if added_str != "":
-            str += f"The following roles were added:{added_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were added:", value=added_str.removeprefix(","))
         if failed_str != "":
-            str += f"The following roles were not found:{failed_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were not found:", value=failed_str.removeprefix(","))
         if block_str != "":
-            str += f"The following roles are not whitelisted:{block_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles are whitelisted:", value=block_str.removeprefix(","))
     
+    embed.timestamp = datetime.now()
+    embed.set_footer(text=f"Eevee bot {util.VERSION}")
+
     await util.pkdelay(message)
-    await message.channel.send(str)
+    await message.channel.send(embed = embed)
     
 # Passes roles and removes them from the user if they exist and are available.
 async def remove_roles(message):
@@ -88,21 +93,24 @@ async def remove_roles(message):
            failed_str += f", {role}"
 
     # Generate msg string
-    str = ""
+    embed = discord.Embed(colour = discord.Colour.dark_grey())
     if guild_config["blacklist_mode"]:
         if removed_str != "":
-            str += f"The following roles were removed:{removed_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were removed:", value=removed_str.removeprefix(","))
         if failed_str != "":
-            str += f"The following roles were not found:{failed_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were not found:", value=failed_str.removeprefix(","))
         if block_str != "":
-            str += f"The following roles are blacklisted:{block_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles are blacklisted:", value=block_str.removeprefix(","))
     else:
         if removed_str != "":
-            str += f"The following roles were removed:{removed_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were removed:", value=removed_str.removeprefix(","))
         if failed_str != "":
-            str += f"The following roles were not found:{failed_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles were not found:", value=failed_str.removeprefix(","))
         if block_str != "":
-            str += f"The following roles are not whitelisted:{block_str.removeprefix(",")}.\n"
+            embed.add_field(name=f"The following roles are whitelisted:", value=block_str.removeprefix(","))
     
+    embed.timestamp = datetime.now()
+    embed.set_footer(text=f"Eevee bot {util.VERSION}")
+
     await util.pkdelay(message)
-    await message.channel.send(str)
+    await message.channel.send(embed = embed)

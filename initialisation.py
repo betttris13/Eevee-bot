@@ -1,5 +1,7 @@
 import os
 import json
+import discord
+from datetime import datetime
 import util
 
 # Initialise server with default settings sand add initialising user to registered users.
@@ -29,7 +31,11 @@ async def initialise(message):
         await util.log(f"User {message.author.name} (id={message.author.id}) initialised guild {message.guild.name} with id={message.guild.id} in channel #{message.channel.name}", guild = message.guild.id, log_type = "INITIALISATION")
         await util.log(f"User {message.author.name} (id={message.author.id}) has been registered by user {message.author.name} (id={message.author.id}) as part of initialisation", guild = message.guild.id, log_type = "REGISTRATION")
         await util.pkdelay(message)
-        await message.channel.send(f"Server initialised with {message.author.mention} as a registered user")
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name=f"Server initialised with {message.author.mention} as a registered user.", value="Eevee bot will now be functional in this server.")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {util.VERSION}")
+        await message.channel.send(embed = embed)
 
 # Reinitialise server with default settings sand add initialising user to registered users.
 async def reinitialise(message):
@@ -52,9 +58,17 @@ async def reinitialise(message):
 
         await util.log(f"User {message.author.name} (id={message.author.id}) reinitialised guild {message.guild.name} with id={message.guild.id} in channel #{message.channel.name}", guild = message.guild.id, log_type = "INITIALISATION")
         await util.pkdelay(message)
-        await message.channel.send(f"Server reinitialised with {message.author.mention} as a registered user")
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name=f"Server reinitialised with {message.author.mention} as a registered user.", value="Eevee bot's setting have been fully reset.")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {util.VERSION}")
+        await message.channel.send(embed = embed)
     
     else:
         await util.log(f"User {message.author.name} (id={message.author.id}) attempted reinitialision of guild {message.guild.name} with id={message.guild.id} but didn't provide token ({guild_config["reset_token"]}) in channel #{message.channel.name}", guild = message.guild.id, log_type = "INITIALISATION")
         await util.pkdelay(message)
-        await message.channel.send(f"Warning you are resetting server initialisation. This will delete blacklist and all registered users/roles. To confirm use: /role reinitialise {guild_config["reset_token"]}")
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name=f"Warning you are resetting server initialisation.", value=f"This will delete whitelist/blacklist, all registered users/roles and fully reset all settings. To confirm use: /role reinitialise {guild_config["reset_token"]}.")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {util.VERSION}")
+        await message.channel.send(embed = embed)
