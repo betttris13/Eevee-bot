@@ -4,28 +4,28 @@ import util
 
 # Parses roles and adds them to blacklist in guild config.
 async def blacklist_add(message):
-    role_str = message.content.removeprefix("/role blacklist add")
+    role_str = message.content.lower().removeprefix("/role blacklist add")
     embed = await util.add_roles(message, role_str, "blacklist_roles")
     await util.pkdelay(message)
     await message.channel.send(embed = embed)
 
 # Parses roles and removes them from blacklist in guild config.
 async def blacklist_remove(message):
-    role_str = message.content.removeprefix("/role blacklist remove")
+    role_str = message.content.lower().removeprefix("/role blacklist remove")
     embed = await util.remove_roles(message, role_str, "blacklist_roles")
     await util.pkdelay(message)
     await message.channel.send(embed = embed)
 
 # Parses roles and adds them to whitelist in guild config.
 async def whitelist_add(message):
-    role_str = message.content.removeprefix("/role whitelist add")
+    role_str = message.content.lower().removeprefix("/role whitelist add")
     embed = await util.add_roles(message, role_str, "whitelist_roles")
     await util.pkdelay(message)
     await message.channel.send(embed = embed)
 
 # Parses roles and removes them from whitelist in guild config.
 async def whitelist_remove(message):
-    role_str = message.content.removeprefix("/role whitelist remove")
+    role_str = message.content.lower().removeprefix("/role whitelist remove")
     embed = await util.remove_roles(message, role_str, "whitelist_roles")
     await util.pkdelay(message)
     await message.channel.send(embed = embed)

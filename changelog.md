@@ -1,7 +1,32 @@
 
 # Change Log
 
-## [pr0.1.3] - 2025-xx-xx
+## [pr0.2.0] - 2025-09-23
+ 
+### Added
+ - Added "/Eevee bot" command that returns version and basic help info.
+ - Added "/role remove - all" command to remove all available roles.
+ - Added "/role current" command to list all roles a user has.
+ - Added help msg on join.
+ - Added update message when bot first starts in a new version on a server.
+ - Added /emoji get command that sends custom emojis in message responded to, to user.
+ - Added /emoji help command.
+
+### Changed
+ - Changed commands to not be case sensitive.
+ - Changed logging to output all roles in one message.
+ - Moved /role command logic into commands.py
+ - Changed is_registered() to return None of server not initialised.
+ - Changed /role help command to be dynamically generated.
+ - Changed bot info msg to include emoji help.
+
+### Fixed
+ - Fixed small role embed text.
+ - Help command gen
+ - Fixed /role help logging and responding permission denied when checking permissions.
+
+
+## [pr0.1.3] - 2025-09-12
  
 ### Added
  - Added error logging.
@@ -14,6 +39,7 @@
 ### Fixed
  - Fixed parsing of roles containing commas. "" can now be used around role to ignore commas.
  - Removed unused imports.
+
 
 ## [pr0.1.2] - 2025-09-09
  
@@ -33,6 +59,7 @@
 - Code commenting in small.py.
 - Code commenting in util.py.
 
+
 ## [pr0.1.1] - 2025-09-08
  
 ### Added
@@ -46,6 +73,7 @@
 ### Fixed
  - Spelling errors.
  - Code commenting in eevee_bot.py.
+
 
 ## [pr0.1.0] - 2025-09-08
  

@@ -124,7 +124,7 @@ async def small(message):
             await util.log(f"Giving role {role_obj.name} (id={role_obj.id}) to user {message.author.name} (id={message.author.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
             await util.pkdelay(message)
             embed = discord.Embed(colour = discord.Colour.dark_grey())
-            embed.add_field(name="You have been given the {role_obj.name} role.", value="Use \"/role small remove\" to remove it.")
+            embed.add_field(name=f"You have been given the {role_obj.name} role.", value="Use \"/role small remove\" to remove it.")
             embed.timestamp = datetime.now()
             embed.set_footer(text=f"Eevee bot {util.VERSION}")
             await message.channel.send(embed = embed)

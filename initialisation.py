@@ -23,6 +23,7 @@ async def initialise(message):
                         "PK_mode": False,
                         "log_channel": None,
                         "small_time": 600,
+                        "current_version": util.VERSION,
                         "reset_token": util.id_generator(6)}
         
         with open(guild_config_file, 'x') as f:
@@ -52,6 +53,7 @@ async def reinitialise(message):
                         "PK_mode": False,
                         "log_channel": None,
                         "small_time": 600,
+                        "current_version": util.VERSION,
                         "reset_token": util.id_generator(6)}
         
         util.save_config(default_config, message.guild.id)

@@ -16,9 +16,10 @@ from io import StringIO
 # Config settings
 dotenv.load_dotenv()
 DIR = str(os.getenv("DIR"))
+TOKEN = str(os.getenv("TOKEN"))
 LOG_FILE = f"{DIR}/{str(os.getenv("LOG_FILE"))}"
 ERROR_FILE = f"{DIR}/error_{str(os.getenv("LOG_FILE"))}"
-VERSION = "pr0.1.3"
+VERSION = "pr0.2.0"
 
 # dicts for generating log text
 lists_add = {"registered_roles": {"str": "registered", "log_type": "REGISTRATION"},
@@ -115,7 +116,7 @@ async def is_registered(message, do_log = True):
     else:
         if do_log:
             await message.channel.send(embed = non_initialised())
-        return False
+        return None
 
 # Generates random alphanumeric string.
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
@@ -293,3 +294,22 @@ def non_initialised():
     embed.timestamp = datetime.now()
     embed.set_footer(text=f"Eevee bot {VERSION}")
     return embed
+
+def parse_changelog():
+    with open(f"{DIR}/changelog.md", 'r', encoding='utf-8') as file:
+        content = file.read()
+
+    # Pattern to match each version block
+    version_pattern = r'## \[(.*?)\] - .*?\n((?:\n|.)*?)(?=^## |\Z)'
+    matches = re.findall(version_pattern, content, re.MULTILINE)
+
+    changelog_dict = {}
+
+    for version, block in matches:
+        # Clean up leading/trailing whitespace
+        cleaned_block = block.strip()
+
+        # Add to dictionary as a formatted string
+        changelog_dict[version] = cleaned_block
+
+    return changelog_dict
