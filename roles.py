@@ -50,7 +50,7 @@ async def add_roles(message):
         if failed_str != "":
             embed.add_field(name=f"The following roles were not found:", value=failed_str.removeprefix(","))
         if block_str != "":
-            embed.add_field(name=f"The following roles are whitelisted:", value=block_str.removeprefix(","))
+            embed.add_field(name=f"The following roles are not whitelisted:", value=block_str.removeprefix(","))
     
     embed.timestamp = datetime.now()
     embed.set_footer(text=f"Eevee bot {util.VERSION}")

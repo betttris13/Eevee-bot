@@ -1,6 +1,21 @@
 
 # Change Log
 
+## [pr0.2.1] - 2025-xx-xx
+ 
+### Added
+
+
+### Changed
+
+
+### Fixed
+ - Fixed Update message text.
+ - Fixed whitelist error text.
+ - Fixed non-message error handling to not log to guild which caused a crash when error occurred on ready.
+ - Fixed encoding error when logging unicode characters.
+
+
 ## [pr0.2.0] - 2025-09-23
  
 ### Added

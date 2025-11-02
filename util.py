@@ -19,7 +19,7 @@ DIR = str(os.getenv("DIR"))
 TOKEN = str(os.getenv("TOKEN"))
 LOG_FILE = f"{DIR}/{str(os.getenv("LOG_FILE"))}"
 ERROR_FILE = f"{DIR}/error_{str(os.getenv("LOG_FILE"))}"
-VERSION = "pr0.2.0"
+VERSION = "pr0.2.1"
 
 # dicts for generating log text
 lists_add = {"registered_roles": {"str": "registered", "log_type": "REGISTRATION"},
@@ -49,12 +49,12 @@ def save_config(guild_config, guild):
 async def log(log_str, guild = None, message = None, log_type = "LOG"):
     now_str = datetime.now().strftime("%d-%m-%y %H:%M:%S")
     print(f"{now_str} {log_type}   {log_str}")
-    with open(LOG_FILE, "a+") as f:
+    with open(LOG_FILE, "a+", encoding="utf-8", errors="replace") as f:
         print(f"{now_str} {log_type}   {log_str}", file=f)
     
     # Guild logging
     if guild != None:
-        with open(f"{DIR}/server_logs/{guild}.txt", "a+") as f:
+        with open(f"{DIR}/server_logs/{guild}.txt", "a+", encoding="utf-8", errors="replace") as f:
             print(f"{now_str} {log_type}   {log_str}", file=f)
         
         # Guild channel logging
@@ -281,7 +281,7 @@ async def error_handle(event, *args, **kwargs):
         await args[0].channel.send(embed = embed)
     
     else:
-        await log(f'Unhandled exception {md5_hash}: {args[0]}', guild = args[0].guild.id, log_type="ERROR")
+        await log(f'Unhandled exception {md5_hash}: occurred {event}', log_type="ERROR")
 
         now_str = datetime.now().strftime("%d-%m-%y %H:%M:%S")
         with open(ERROR_FILE, "a+") as f:

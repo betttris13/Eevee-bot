@@ -21,9 +21,9 @@ async def on_ready():
     changelog = util.parse_changelog()
     changelog_ver = changelog[util.VERSION].split("### ")
     embed = discord.Embed(title = f"Eevee bot has been updated to {util.VERSION} on this server!", description = f"Check out the [release notes for {util.VERSION}](https://github.com/betttris13/Eevee-bot/releases/tag/{util.VERSION}) and the [full changelog](https://github.com/betttris13/Eevee-bot/blob/main/changelog.md).", colour = discord.Colour.orange())
-    embed.add_field(name=f"Changed", value=changelog_ver[1].removeprefix("Added\n"))
+    embed.add_field(name=f"Added:", value=changelog_ver[1].removeprefix("Added\n"))
     embed.add_field(name=f"Changed", value=changelog_ver[2].removeprefix("Changed\n"))
-    embed.add_field(name=f"Changed", value=changelog_ver[3].removeprefix("Fixed\n"))
+    embed.add_field(name=f"Fixed:", value=changelog_ver[3].removeprefix("Fixed\n"))
     embed.timestamp = datetime.now()
     embed.set_footer(text=f"Eevee bot {util.VERSION}")
 
