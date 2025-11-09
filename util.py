@@ -19,7 +19,7 @@ DIR = str(os.getenv("DIR"))
 TOKEN = str(os.getenv("TOKEN"))
 LOG_FILE = f"{DIR}/{str(os.getenv("LOG_FILE"))}"
 ERROR_FILE = f"{DIR}/error_{str(os.getenv("LOG_FILE"))}"
-VERSION = "pr0.2.1"
+VERSION = "pr0.3.0"
 
 # dicts for generating log text
 lists_add = {"registered_roles": {"str": "registered", "log_type": "REGISTRATION"},

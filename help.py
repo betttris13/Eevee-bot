@@ -132,7 +132,7 @@ async def list_roles_user(message):
     embed.set_footer(text=f"Eevee bot {util.VERSION}")
     await message.channel.send(embed=embed)
 
-# Outputs pot info
+# Outputs bot info
 async def welcome(member):
     if member.guild.system_channel and member.guild.system_channel.permissions_for(member.guild.me).send_messages:
         embed = discord.Embed(title = f"Welcome to {member.guild.name}!!", colour = discord.Colour.blurple())
@@ -142,3 +142,12 @@ async def welcome(member):
         embed.timestamp = datetime.now()
         embed.set_footer(text=f"Eevee bot {util.VERSION}")
         await member.guild.system_channel.send(embed = embed)
+
+# Outputs bot info
+async def join(guild):
+    embed = discord.Embed(title = f"Eevee bot {util.VERSION} has joined the server!", description="To begin using the bot for role management please first initialise the bot.", colour = discord.Colour.orange())
+    embed.add_field(name=f"To initialise the Eevee bot in this server use:", value=" /role initialise")
+    embed.add_field(name=f"For further help see:", value="/Eevee bot")
+    embed.timestamp = datetime.now()
+    embed.set_footer(text=f"Eevee bot {util.VERSION}")
+    await guild.system_channel.send(embed = embed)

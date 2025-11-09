@@ -1,13 +1,26 @@
 
 # Change Log
 
-## [pr0.2.1] - 2025-xx-xx
+## [pr0.3.0] - 2025-11-09
+ 
+### Added
+ - Added message on bot joining a server.
+ - Added admin remove small function.
+ - Added command to view what smalls can see.
+
+### Changed
+ - Changed initialisation to require admin privileges on server.
+ - Major overhaul of small function.
+ - Changed small function to check what channels the small role should not see and manually lock user from those channels if they can still see them.
+
+### Fixed
+ - Fixed bot giving small role with invalid text after command.
+
+## [pr0.2.1] - 2025-11-02
  
 ### Added
 
-
 ### Changed
-
 
 ### Fixed
  - Fixed Update message text.

@@ -84,6 +84,8 @@ async def small_remove(message):
                 await asyncio.sleep(guild_config["small_time"])
                 
                 await message.author.remove_roles(role_obj)
+                visible, not_visible = get_small_access(message, role_obj)
+                await unlock_smalls(message.author, not_visible)
                 await util.log(f"Removing role {role_obj.name} (id={role_obj.id}) from user {message.author.name} (id={message.author.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
                 embed = discord.Embed(colour = discord.Colour.dark_grey())
                 embed.add_field(name=f"Small role removed.", value=f"{message.author.mention} the small role {role_obj.name} has been removed if it hadn't already.")
@@ -122,9 +124,121 @@ async def small(message):
         if role_obj != None:
             await message.author.add_roles(role_obj)
             await util.log(f"Giving role {role_obj.name} (id={role_obj.id}) to user {message.author.name} (id={message.author.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
+            visible, not_visible = get_small_access(message, role_obj)
+            await lock_smalls(message.author, not_visible)
+            
             await util.pkdelay(message)
             embed = discord.Embed(colour = discord.Colour.dark_grey())
             embed.add_field(name=f"You have been given the {role_obj.name} role.", value="Use \"/role small remove\" to remove it.")
+            embed.timestamp = datetime.now()
+            embed.set_footer(text=f"Eevee bot {util.VERSION}")
+            await message.channel.send(embed = embed)
+
+        else:
+            await util.pkdelay(message)
+            embed = discord.Embed(colour = discord.Colour.dark_grey())
+            embed.add_field(name="The set small role was not available.", value="")
+            embed.timestamp = datetime.now()
+            embed.set_footer(text=f"Eevee bot {util.VERSION}")
+            await message.channel.send(embed = embed)
+    
+    else:
+        await util.pkdelay(message)
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name="Small role not set.", value="")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {util.VERSION}")
+        await message.channel.send(embed = embed)
+
+# Locks small role from seeing restricted channels.
+async def lock_smalls(user, channels):
+    for channel in channels:
+        me = channel.guild.me
+        perms = channel.permissions_for(me)
+        if perms.manage_channels and perms.view_channel and channel.permissions_for(user).view_channel:
+            try:
+                await channel.set_permissions(user, view_channel=False)
+            except discord.Forbidden:
+                ...
+
+# Unlocks small role from seeing restricted channels.
+async def unlock_smalls(user, channels):
+    for channel in channels:
+        me = channel.guild.me
+        perms = channel.permissions_for(me)
+        if perms.manage_channels and perms.view_channel and not channel.permissions_for(user).view_channel:
+            try:
+                await channel.set_permissions(user, overwrite=None)
+            except discord.Forbidden:
+                ...
+            
+# Gets what channels can and cant be accessed by small role.
+def get_small_access(message, role_obj):
+    visible = []
+    not_visible = []
+    for channel in message.guild.channels:
+        perms = channel.permissions_for(role_obj)
+        if perms.view_channel:
+            visible.append(channel)
+        else:
+            not_visible.append(channel)
+    return visible, not_visible
+
+# Checks what small can see.
+async def check_smalls(message):
+    guild_config = util.load_config(message.guild.id)
+    if guild_config["small_role"] != None:
+        role_obj = next((r for r in message.guild.roles if r.id == guild_config["small_role"]), None)
+        if role_obj != None:
+            visible, not_visible = get_small_access(message, role_obj)
+            # print("Visible channels:", [ch.name for ch in visible])
+            # print("Not visible channels:", [ch.name for ch in not_visible])
+            vis = f""
+            for i in visible:
+                vis += f", {i.name}"
+            vis = vis.removeprefix(",")
+            await util.pkdelay(message)
+            embed = discord.Embed(colour = discord.Colour.dark_grey())
+            embed.add_field(name=f"Visible to smalls:", value=vis)
+            # embed.add_field(name=f"Not visible to smalls:", value=not_visible)
+            embed.timestamp = datetime.now()
+            embed.set_footer(text=f"Eevee bot {util.VERSION}")
+            await message.channel.send(embed = embed)
+            # await message.channel.send(f"{visible}")
+
+        else:
+            await util.pkdelay(message)
+            embed = discord.Embed(colour = discord.Colour.dark_grey())
+            embed.add_field(name="The set small role was not available.", value="")
+            embed.timestamp = datetime.now()
+            embed.set_footer(text=f"Eevee bot {util.VERSION}")
+            await message.channel.send(embed = embed)
+    
+    else:
+        await util.pkdelay(message)
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name="Small role not set.", value="")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {util.VERSION}")
+        await message.channel.send(embed = embed)
+
+# Removes small from another user.
+async def admin_small_remove(message):
+    guild_config = util.load_config(message.guild.id)
+    if guild_config["small_role"] != None:
+        role_obj = next((r for r in message.guild.roles if r.id == guild_config["small_role"]), None)
+        if role_obj != None:
+            visible, not_visible = get_small_access(message, role_obj)
+            
+            if message.mentions:
+                for user in message.mentions:
+                    await user.remove_roles(role_obj)
+                    await unlock_smalls(user, not_visible)
+                    await util.log(f"Removing role {role_obj.name} (id={role_obj.id}) from user {user.name} (id={user.id}) in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "LOG")
+            
+            await util.pkdelay(message)
+            embed = discord.Embed(colour = discord.Colour.dark_grey())
+            embed.add_field(name=f"Small role removed.", value=f"{message.author.mention} has removed the small role from users.")
             embed.timestamp = datetime.now()
             embed.set_footer(text=f"Eevee bot {util.VERSION}")
             await message.channel.send(embed = embed)

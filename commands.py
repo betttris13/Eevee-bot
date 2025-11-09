@@ -106,9 +106,20 @@ async def role_commands(message):
 
     # 7 admin
     # /role initialise
-    # Initialises the server with default configuration and registers the initialising user.
+    # Initialises the server with default configuration and registers the initialising user. Requires administrator permissions to use.
     elif message.content.lower().startswith('/role initialise'):
-        await initialisation.initialise(message)
+        if message.author.guild_permissions.administrator:
+            await initialisation.initialise(message)
+        
+        else:
+            await util.log(f"User {message.author.name} (id={message.author.id}) attempted initialisation of guild {message.guild.name} with id={message.guild.id} without admin permissions in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
+            await util.pkdelay(message)
+            embed = discord.Embed(colour = discord.Colour.red())
+            embed.add_field(name=f"Permission denied", value="You must be administrator to use that command.")
+            embed.timestamp = datetime.now()
+            embed.set_footer(text=f"Eevee bot {util.VERSION}")
+            await message.channel.send(embed=embed)
+
 
     # 8 admin
     # /role reinitialise
@@ -120,6 +131,12 @@ async def role_commands(message):
         if os.path.isfile(guild_config_file):
             if await util.is_registered(message, False):
                 await initialisation.reinitialise(message)
+                await util.pkdelay(message)
+                embed = discord.Embed(colour = discord.Colour.red())
+                embed.add_field(name=f"Permission denied", value="You must be registered to use that command.")
+                embed.timestamp = datetime.now()
+                embed.set_footer(text=f"Eevee bot {util.VERSION}")
+                await message.channel.send(embed=embed)
 
             else:
                 await util.log(f"User {message.author.name} (id={message.author.id}) attempted reinitialision of guild {message.guild.name} with id={message.guild.id} without permission in channel #{message.channel.name}", guild = message.guild.id, message = message, log_type = "PERMISSION")
@@ -184,25 +201,35 @@ async def role_commands(message):
 
         # 23 any
         # /role small remove
-        # Triggers a timer to remove the set small role if it is set and pings the registered roles to remove in the meantime.
+        # Triggers a timer to remove the set small role if it is set and pings the registered roles to remove in the meantime. A registered user may tag another user to remove small from that user.
         elif message.content.lower() == '/role small remove':
             await small.small_remove(message)
+        
+        elif message.content.lower().startswith('/role small remove'):
+            if await util.is_registered(message):
+                await small.admin_small_remove(message)
+        
+        # 24 any
+        # /role small check
+        # Shows what channels the small role can see while user is small.
+        elif message.content.lower() == '/role small check':
+            await small.check_smalls(message)
         
         # 22 any
         # /role small
         # Gives the set small role if it is set.
-        else:
+        elif message.content.lower() == '/role small':
             await small.small(message)
 
 # Emoji related commands
 async def emoji_commands(message):
-    # 24 any
+    # 25 any
     # /emoji help
     # Shows this message.
     if message.content == "/emoji help":
         await help.emoji_help(message)
 
-    # 25 any
+    # 26 any
     # /emoji get
     # DMs any custom emojis in the message replied to.
     if message.content == "/emoji get":

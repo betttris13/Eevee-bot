@@ -35,7 +35,12 @@ async def on_ready():
                 guild_config["current_version"] = util.VERSION
                 util.save_config(guild_config, guild.id)
                 await guild.system_channel.send(embed = embed)
-        
+
+@client.event
+async def on_guild_join(guild):
+    await util.log(f"Eevee bot has joined {guild.name} (id={guild.id})", guild = guild.id, log_type = "JOIN")
+    await help.join(guild)
+
 @client.event
 async def on_member_join(member):
     await help.welcome(member)
