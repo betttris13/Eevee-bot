@@ -19,7 +19,20 @@ DIR = str(os.getenv("DIR"))
 TOKEN = str(os.getenv("TOKEN"))
 LOG_FILE = f"{DIR}/{str(os.getenv("LOG_FILE"))}"
 ERROR_FILE = f"{DIR}/error_{str(os.getenv("LOG_FILE"))}"
-VERSION = "pr0.3.0"
+VERSION = "pr0.3.1"
+
+DEFAULT_CONFIG = {"registered_users": [],
+                        "registered_roles": [],
+                        "whitelist_roles": [],
+                        "blacklist_roles": [],
+                        "blacklist_mode": False,
+                        "small_role": None,
+                        "PK_mode": False,
+                        "log_channel": None,
+                        "log_type": "ALL", # ALL|COMMAND|MEMBER
+                        "small_time": 600,
+                        "current_version": VERSION,
+                        "reset_token": "abcdef"}
 
 # dicts for generating log text
 lists_add = {"registered_roles": {"str": "registered", "log_type": "REGISTRATION"},
@@ -39,6 +52,16 @@ def load_config(guild):
     
     return None
 
+async def verify_config(guild):
+    guild_config = load_config(guild.id)
+    if guild_config != None:
+        missing_keys = [k for k in DEFAULT_CONFIG if k not in guild_config]
+        if missing_keys != []:
+            for i in missing_keys:
+                guild_config[i] = DEFAULT_CONFIG[i]
+            await log(f"Eevee bot detected outdated config in {guild.name} (id={guild.id}) and has updated it.", guild = guild.id, log_type = "WARN")
+            save_config(guild_config, guild.id)
+
 # Saves the provided guilds config
 def save_config(guild_config, guild):
     os.remove(f"{DIR}/guild_configs/{guild}.json")
@@ -46,7 +69,7 @@ def save_config(guild_config, guild):
         json.dump(guild_config, f, indent=4)
 
 # Saves log string to log file, also logs to the guild log and then the guilds logging channel if set and message is provided.
-async def log(log_str, guild = None, message = None, log_type = "LOG"):
+async def log(log_str, guild = None, message = None, member = None, log_type = "LOG"):
     now_str = datetime.now().strftime("%d-%m-%y %H:%M:%S")
     print(f"{now_str} {log_type}   {log_str}")
     with open(LOG_FILE, "a+", encoding="utf-8", errors="replace") as f:
@@ -60,7 +83,7 @@ async def log(log_str, guild = None, message = None, log_type = "LOG"):
         # Guild channel logging
         if message != None:
             guild_config = load_config(guild)
-            if guild_config["log_channel"] != None:
+            if guild_config["log_channel"] != None and (guild_config["log_type"] == "ALL" or guild_config["log_type"] == "COMMAND"):
                 match = re.search(r'#([\w-]+)', log_str)
                 if match:
                     channel_name = match.group(1)
@@ -75,6 +98,16 @@ async def log(log_str, guild = None, message = None, log_type = "LOG"):
                 embed.timestamp = datetime.now()
                 embed.set_footer(text=f"Eevee bot {VERSION}")
                 await message.guild.get_channel(guild_config["log_channel"]).send(embed=embed)
+        
+        elif log_type == "MEMBER":
+            guild_config = load_config(guild)
+            if guild_config["log_channel"] != None and (guild_config["log_type"] == "ALL" or guild_config["log_type"] == "MEMBER"):
+                embed = discord.Embed(colour = discord.Colour.orange())
+                embed.add_field(name=f"{log_type} {now_str}", value=log_str)
+                embed.timestamp = datetime.now()
+                embed.set_footer(text=f"Eevee bot {VERSION}")
+                await member.guild.get_channel(guild_config["log_channel"]).send(embed=embed)
+                
 
 # Check if user is in list of registered users.
 def is_registered_user(message):
@@ -242,6 +275,28 @@ async def log_set(message):
     embed.timestamp = datetime.now()
     embed.set_footer(text=f"Eevee bot {VERSION}")
     await message.channel.send(embed = embed)
+
+async def log_type(message):
+    type = message.content.removeprefix("/role log type ")
+    if type in ["ALL", "COMMAND", "MEMBER"]:
+        guild_config = load_config(message.guild.id)
+        guild_config["log_TYPE"] = type
+        save_config(guild_config, message.guild.id)
+        await log(f"User {message.author.name} (id={message.author.id}) set log type to {type} in channel #{message.channel.name}", guild = message.guild.id, log_type = "LOG")
+        await pkdelay(message)
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name = "Log type Set.", value = f"Logging is now of type {type}.")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {VERSION}")
+        await message.channel.send(embed = embed)
+    else:
+        await pkdelay(message)
+        embed = discord.Embed(colour = discord.Colour.dark_grey())
+        embed.add_field(name = "Unknown log type.", value = "Valid log types are ALL|COMMAND|MEMBER.")
+        embed.timestamp = datetime.now()
+        embed.set_footer(text=f"Eevee bot {VERSION}")
+        await message.channel.send(embed = embed)
+
 
 # Disables guild log channel.
 async def log_off(message):

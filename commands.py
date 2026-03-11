@@ -169,6 +169,13 @@ async def role_commands(message):
         if await util.is_registered(message):
             await util.log_set(message)
 
+    # 27 admin
+    # /role log type [ALL|COMMAND|MEMBER]
+    # Sets the log type in the server.
+    elif message.content.startswith('/role log type'):
+        if await util.is_registered(message):
+            await util.log_type(message)
+
     # 18 admin
     # /role log off
     # Disables bot logging to server.

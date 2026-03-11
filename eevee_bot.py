@@ -29,6 +29,7 @@ async def on_ready():
 
     for guild in client.guilds:
         await util.log(f"Eevee bot connected to {guild.name} (id={guild.id})", guild = guild.id, log_type = "INFO")
+        await util.verify_config(guild)
         guild_config = util.load_config(guild.id)
         if guild_config != None:
             if guild_config["current_version"] != util.VERSION:
@@ -44,6 +45,13 @@ async def on_guild_join(guild):
 @client.event
 async def on_member_join(member):
     await help.welcome(member)
+    guild = member.guild
+    await util.log(f"{member.name} (id={member.id}) has joined {guild.name}", guild = guild.id, message = None, member = member, log_type = "MEMBER")
+
+@client.event
+async def on_member_remove(member):
+    guild = member.guild
+    await util.log(f"{member.name} (id={member.id}) has left {guild.name}", guild = guild.id, message = None, member = member, log_type = "MEMBER")
 
 @client.event
 async def on_message(message):

@@ -1,6 +1,18 @@
 
 # Change Log
 
+## [pr0.3.1] - 2026-xx-xx
+ 
+### Added
+ - Added member joining and leave logging.
+ - Added logging type setting.
+
+### Changed
+ - Changed default config setup and verifies config on load.
+
+### Fixed
+ - 
+
 ## [pr0.3.0] - 2025-11-09
  
 ### Added
@@ -10,7 +22,6 @@
 
 ### Changed
  - Changed initialisation to require admin privileges on server.
- - Major overhaul of small function.
  - Changed small function to check what channels the small role should not see and manually lock user from those channels if they can still see them.
 
 ### Fixed

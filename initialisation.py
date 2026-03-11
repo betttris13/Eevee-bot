@@ -14,17 +14,10 @@ async def initialise(message):
         await message.channel.send("Server already initialised")
     
     else:
-        default_config = {"registered_users": [message.author.id],
-                        "registered_roles": [],
-                        "whitelist_roles": [],
-                        "blacklist_roles": [],
-                        "blacklist_mode": False,
-                        "small_role": None,
-                        "PK_mode": False,
-                        "log_channel": None,
-                        "small_time": 600,
-                        "current_version": util.VERSION,
-                        "reset_token": util.id_generator(6)}
+        default_config = util.DEFAULT_CONFIG
+        default_config["registered_users"] = [message.author.id]
+        default_config["reset_token"] = util.id_generator(6)
+
         
         with open(guild_config_file, 'x') as f:
             json.dump(default_config, f, indent=4)
@@ -44,17 +37,9 @@ async def reinitialise(message):
 
     if message.content == f"/role reinitialise {guild_config["reset_token"]}":
 
-        default_config = {"registered_users": [message.author.id],
-                        "registered_roles": [],
-                        "whitelist_roles": [],
-                        "blacklist_roles": [],
-                        "blacklist_mode": False,
-                        "small_role": None,
-                        "PK_mode": False,
-                        "log_channel": None,
-                        "small_time": 600,
-                        "current_version": util.VERSION,
-                        "reset_token": util.id_generator(6)}
+        default_config = util.DEFAULT_CONFIG
+        default_config["registered_users"] = [message.author.id]
+        default_config["reset_token"] = util.id_generator(6)
         
         util.save_config(default_config, message.guild.id)
 

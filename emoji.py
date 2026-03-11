@@ -6,8 +6,9 @@ import io
 from math import ceil
 import util
 
+CUSTOM_EMOJI_PATTERN = r'<a?:\w+:(\d+)>'
+
 async def get_emoji(message):
-    CUSTOM_EMOJI_PATTERN = r'<a?:\w+:(\d+)>'
 
     # Check if reply
     if message.reference and isinstance(message.reference.resolved, discord.Message):
